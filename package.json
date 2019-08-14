@@ -1,0 +1,24 @@
+{
+    "name": "tcp-chat",
+    "version": "1.0.0",
+    "description": "TCP socket chat server",
+    "main": "chat.js",
+    "scripts": {
+        "test": "node chat.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/anuvgupta/tcp-chat.git"
+    },
+    "keywords": [
+        "tcp",
+        "chat"
+    ],
+    "author": "Anuv Gupta",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/anuvgupta/tcp-chat/issues"
+    },
+    "homepage": "https://github.com/anuvgupta/tcp-chat#readme",
+    "dependencies": {}
+}
