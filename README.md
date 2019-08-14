@@ -15,4 +15,4 @@ Available commands:
 ## usage
 
 Requires latest `node`, but no packages.  
-Run with `node chat {port}` (or `npm test` for testing). Clients can connect with telnet: `telnet localhost 30000`.
+Run with `node chat {port}` (or `npm test` for testing). Clients can connect with telnet: `telnet localhost {port}`.
