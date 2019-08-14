@@ -28,7 +28,7 @@ server = {
             client.id = util.rand_id(7);
         server.clients[client.id] = client;
         console.log(`client ${client.id} – connected`);
-        server.send_msg(client.id, `welcome to tcp chat 1.0!`);
+        server.send_msg(client.id, eol + "tcp chat 1.0");
         client.socket.on('data', (data) => {
             data = (`${data}`).trim();
             if (data.charAt(0) == ':') {
@@ -42,8 +42,20 @@ server = {
                         server.send_msg(client.id, `${util.nice_time()} | [${cmd}] ${msg}`);
                     });
                 else server.send_msg(client.id, `${util.nice_time()} | [${cmd}] command not known`);
-            } else if (server.cmds.hasOwnProperty('msg'))
-                server.cmds['msg'](client, data);
+            } else {
+                var msg = {
+                    data: data,
+                    sender_id: client.id,
+                    sender_name: client.name == "" ? "anonymous" : client.name,
+                    timestamp: Date.now()
+                };
+                server.log.push(msg);
+                if (server.log.length >= max_logs) server.log.shift();
+                for (var c in server.clients) {
+                    if (server.clients.hasOwnProperty(c) && c != client.id)
+                        server.send_msg(c, `${util.nice_time(msg.timestamp)} | ${msg.sender_name}: ${msg.data}`);
+                }
+            }
         });
         client.socket.on('error', (error) => {
             console.error(`client ${client.id} – error`);
@@ -55,9 +67,12 @@ server = {
             delete server.clients[client.id];
             server.num_clients--;
         });
-        server.send_msg(client.id, `type :help for commands`);
-
-
+        server.send_msg(client.id, "type :help for commands");
+        server.send_msg(client.id, "––––––––––––––––––––––––" + eol);
+        for (var l in server.log) {
+            var msg = server.log[l];
+            server.send_msg(client.id, `${util.nice_time(msg.timestamp)} | ${msg.sender_name}: ${msg.data}`);
+        }
     }),
     send_msg: (id, msg) => {
         if (server.clients.hasOwnProperty(id)) {
@@ -71,12 +86,11 @@ server = {
     },
     cmds: [],
     cmds_alias: {},
-    on: (cmd, callback) => {
+    cmd: (cmd, callback) => {
         if (typeof callback === 'string' && server.cmds.hasOwnProperty(callback))
             server.cmds_alias[cmd] = callback;
         else if (typeof callback === 'function')
             server.cmds[cmd] = callback;
-
     },
     listen: (p) => {
         server.socket.on('error', (error) => {
@@ -89,22 +103,7 @@ server = {
     },
 };
 
-server.on('msg', (client, data) => {
-    var msg = {
-        data: data,
-        sender_id: client.id,
-        sender_name: client.name == "" ? "anonymous" : client.name,
-        timestamp: Date.now()
-    };
-    server.log.push(msg);
-    if (server.log.length >= max_logs) server.log.shift();
-    for (var c in server.clients) {
-        if (server.clients.hasOwnProperty(c) && c != client.id)
-            server.send_msg(c, `${util.nice_time(msg.timestamp)} | ${msg.sender_name}: ${msg.data}`);
-    }
-})
-
-server.on('name', (client, args, res) => {
+server.cmd('name', (client, args, res) => {
     if (args.length < 1) {
         res("please provide name");
     } else {
@@ -130,21 +129,21 @@ server.on('name', (client, args, res) => {
         }
     }
 });
-server.on('n', 'name');
+server.cmd('n', 'name');
 
-server.on('quit', (client, _, res) => {
+server.cmd('quit', (client, _, res) => {
     res("peace out");
     server.close(client.id);
 });
-server.on('q', 'quit');
+server.cmd('q', 'quit');
 
-server.on('help', (client, _, res) => {
+server.cmd('help', (client, _, res) => {
     res("available commands");
     var res_h = (msg) => server.send_msg(client.id, `        ${msg}`);
     res_h(":name {name}  –  set name (n)");
     res_h(":quit         –  leave chat (q)");
     res_h(":help         –  list commands (h)");
 });
-server.on('h', 'help');
+server.cmd('h', 'help');
 
 server.listen(port);
