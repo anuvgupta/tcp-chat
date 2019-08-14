@@ -29,3 +29,7 @@ Available commands:
 Requires latest `node`, but no packages.  
 Run with `node chat {port}` (or `npm test` for testing).  
 Clients can connect with telnet: `telnet localhost {port}`.
+
+## live
+
+Connect to the hosted server: `telnet tcp.anuv.me 3004`.
