@@ -4,7 +4,7 @@
     "description": "TCP socket chat server",
     "main": "chat.js",
     "scripts": {
-        "test": "node chat.js"
+        "test": "node chat"
     },
     "repository": {
         "type": "git",
