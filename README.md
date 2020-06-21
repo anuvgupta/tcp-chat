@@ -1,6 +1,5 @@
 # tcp-chat
-
-TCP socket chat server in Node.
+TCP chat room server with basic client, accessible via telnet. Built with Node.js.  
 
 ## features
 
