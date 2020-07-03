@@ -2,7 +2,7 @@ const net = require('net');
 const util = require('./util');
 
 const args = process.argv.splice(2);
-const port = args[0] ? parseInt(args[0]) : 30000;
+const port = args[0] ? parseInt(args[0]) : 3005;
 const eol = "\r\n";
 const max_clients = 3;
 const max_logs = 10;
